@@ -9,3 +9,5 @@ sudo apt-get -y install pyudev
 sudo pip3 install serial json time datetime ftplib
 echo "sudo python3 /home/pi/Desktop/DQM_Script.py" >> /home/pi/.bashrc
 echo 'setup complete'
+echo 'running script...'
+sudo python3 /home/pi/Desktop/DQM_Script.py

@@ -2,3 +2,4 @@
 echo 'dtoverlay=pi3-disable-bt' >> /boot/config.txt
 sudo systemctl disable hciuart
 echo "/home/pi/Desktop/DQM_AfterRebootSetup" >> /home/pi/.bashrc
+sudo reboot
