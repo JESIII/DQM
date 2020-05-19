@@ -1,0 +1,3 @@
+#!/bin/bash
+echo 'dtoverlay=pi3-disable-bt' >> /boot/config.txt
+sudo systemctl disable hciuart

@@ -1,0 +1,8 @@
+#!/bin/bash
+sudo cp /boot/cmdline.txt /boot/cmdline.txt.backup
+sudo sed -i -e 's/console=serial0,115200//g' /boot/cmdline.txt
+sudo apt update
+sudo apt install python3
+sudo apt install python3-pip
+sudo pip3 install serial json time datetime ftplib
+echo 'setup complete'
