@@ -14,6 +14,7 @@ USBlog = open(fullLogPath, "a")
 log = open(fullLogPath, "a")
 lastUpdatedDate = date.today()
 def connectToUSBStick():
+    global USBlog
     failed = False
     try:
         USBLogPath = "/media/pi/USB STICK/DQMLogs"
@@ -28,6 +29,7 @@ def connectToUSBStick():
     else:
         print("Connected to USB STICK")
 def connectToUSBStick1():
+    global USBlog
     failed = False
     try:
         USBLogPath = "/media/pi/USB STICK1/DQMLogs"
@@ -42,6 +44,8 @@ def connectToUSBStick1():
     else:
         print("Connected to USB STICK1")
 def updateLogPath():
+    global log
+    global USBLog
     try:
         USBlog.close()
         connectToUSBStick()
@@ -49,15 +53,15 @@ def updateLogPath():
         print("Failed to update USB Log Path")
     log.close()
     fullLogPath = logPath + '/log-' + str(date.today()) + '.txt'
-    log.open(fullLogPath, "a")
+    log = open(fullLogPath, "a")
+    return True
 def uploadViaFTP():
     ftp = FTP('192.168.1.28')
     ftp.login(user="admin", passwd='admin')
     try:
         ftp.cwd('DQM_Logs')
     except:
-        #ftp.mkd('DQM_Logs')
-        ftp.cwd('DQM_Logs')
+        print("Couldn't connect to FTP Server")
         
     with open(fullLogPath, 'rb') as file:
         ftp.storbinary('STOR '+'log-'+str(date.today())+'.txt', file)
@@ -66,22 +70,24 @@ def uploadViaFTP():
 uploadViaFTP()
 connectToUSBStick()
 while rs232com.isOpen():
-    inString = rs232com.readline().decode()
-    log.write(inString)
-    try:
-        USBlog.write(inString)
-    except:
-        print("Tried to write to USB Stick and failed. Trying the other USB Stick...")
-        connectToUSBStick()
-    list_of_files = os.listdir(logPath)
-    full_path = ["/home/pi/Documents/DQMLogs/{0}".format(x) for x in list_of_files]
-    print(inString)
-    if len(list_of_files) > 90:
-        oldest_file = min(full_path, key=os.path.getctime)
-        os.remove(oldest_file)
-        print('Removed: ' + oldest_file)
-    if date.today() != lastUpdatedDate:
-        uploadViaFTP()
-        lastUpdatedDate = date.today
-        updateLogPath()
-        print("Yesterdays log uploaded to NAS.")
+    inString = rs232com.readline().decode(encoding='latin-1')
+    if updateLogPath():
+        log.write(inString)
+        try:
+            USBlog.write(inString)
+        except:
+            print("Tried to write to USB Stick and failed. Trying the other USB Stick...")
+            connectToUSBStick()
+        list_of_files = os.listdir(logPath)
+        full_path = ["/home/pi/Documents/DQMLogs/{0}".format(x) for x in list_of_files]
+        print(inString)
+        if len(list_of_files) > 90:
+            oldest_file = min(full_path, key=os.path.getctime)
+            os.remove(oldest_file)
+            print('Removed: ' + oldest_file)
+        if date.today() != lastUpdatedDate:
+            uploadViaFTP()
+            lastUpdatedDate = date.today
+            updateLogPath()
+            print("Yesterdays log uploaded to NAS.")
+
