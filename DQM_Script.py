@@ -1,6 +1,9 @@
-import serial, json, os, subprocess, time
+import serial, json, os, subprocess, time, pyudev
 from datetime import date, timedelta
 from ftplib import FTP
+context = pyudev.Context()
+for device in context.list_devices(subsystem='block', DEVTYPE='partition'):
+    print(device)
 rs232com = serial.Serial(port='/dev/serial0',baudrate=9600,parity=serial.PARITY_NONE,\
 stopbits=serial.STOPBITS_ONE,bytesize=serial.EIGHTBITS)
 print("connected to: " + rs232com.portstr)

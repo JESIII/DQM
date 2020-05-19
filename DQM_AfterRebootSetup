@@ -1,8 +1,11 @@
 #!/bin/bash
+sudo sed -i '//home/pi/Desktop/DQM_AfterRebootSetup/d' /home/pi/.bashrc
 sudo cp /boot/cmdline.txt /boot/cmdline.txt.backup
 sudo sed -i -e 's/console=serial0,115200//g' /boot/cmdline.txt
-sudo apt update
-sudo apt install python3
-sudo apt install python3-pip
+sudo apt-get -y update
+sudo apt-get -y install python3
+sudo apt-get -y install python3-pip
+sudo apt-get -y install pyudev
 sudo pip3 install serial json time datetime ftplib
+echo "sudo python3 /home/pi/Desktop/DQM_Script.py" >> /home/pi/.bashrc
 echo 'setup complete'
